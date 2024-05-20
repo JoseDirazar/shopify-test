@@ -22,7 +22,6 @@ import SelectOrderPage from "../routes/selectOrder";
 import SelectProductFromOrderPage from "../routes/selectProductOrder";
 import AddProductsPage from "../routes/addProducts";
 import { api } from "../api";
-import IndexTableWithFilteringExample from "./FilterTest";
 
 function Error404() {
   const navigate = useNavigate();
@@ -51,10 +50,6 @@ function App() {
           element={<SelectProductFromOrderPage />}
         />
         <Route path="/orders/add/:boxId" element={<AddProductsPage />} />
-        <Route
-          path="/orders/test"
-          element={<IndexTableWithFilteringExample />}
-        />
         <Route path="*" element={<Error404 />} />
       </Route>
     )

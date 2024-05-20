@@ -6,15 +6,18 @@ import {
   IndexTable,
   useIndexResourceState,
   Spinner,
+  TextField
 } from "@shopify/polaris";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../web/api";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useFindMany } from "@gadgetinc/react";
 
 export default function () {
   const [loading, setLoading] = useState(true);
   const [productItems, setProductItems] = useState([]);
+  const [queryValue, setQueryValue] = useState("");
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const navigate = useNavigate();
 
   const [{ data: dataProduct }] = useFindMany(api.shopifyProduct, {
@@ -56,6 +59,7 @@ export default function () {
             "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_medium.png?format=webp&v=1530129081",
         }));
         setProductItems(products);
+        setFilteredProducts(products);
       }
     } catch (error) {
       console.error('Error:', error);
@@ -64,10 +68,22 @@ export default function () {
     }
   }, [dataProduct]);
 
+  const handleQueryValueChange = useCallback((value) => {
+    setQueryValue(value);
+  }, []);
+
+  useEffect(() => {
+    setFilteredProducts(
+      productItems.filter((product) =>
+        product.name.toLowerCase().includes(queryValue.toLowerCase())
+      )
+    );
+  }, [queryValue, productItems]);
+
   const previewImage = 'https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_medium.png?format=webp&v=1530129081';
 
   const { selectedResources, allResourcesSelected, handleSelectionChange } =
-    useIndexResourceState(productItems);
+    useIndexResourceState(filteredProducts);
 
   return (
     <section>
@@ -80,13 +96,21 @@ export default function () {
               onAction: () => navigate(-1),
             }}
           >
+            <TextField
+              label="Search products"
+              value={queryValue}
+              onChange={handleQueryValueChange}
+              clearButton
+              onClearButtonClick={() => setQueryValue("")}
+              placeholder="Search by product name"
+            />
             <IndexTable
               selectable={true}
               resourceName={{
                 singular: 'product',
                 plural: 'products',
               }}
-              itemCount={productItems.length}
+              itemCount={filteredProducts.length}
               selectedItemsCount={
                 allResourcesSelected ? 'All' : selectedResources.length
               }
@@ -97,7 +121,7 @@ export default function () {
                 { title: 'Inventory' },
               ]}
             >
-              {productItems.map(
+              {filteredProducts.map(
                 ({ id, name, variantId, image, stock, status }, index) => (
                   <IndexTable.Row
                     id={id}
