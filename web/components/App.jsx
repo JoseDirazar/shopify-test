@@ -14,14 +14,15 @@ import {
   createRoutesFromElements,
   useLocation,
   useNavigate,
-  Link
+  Link,
 } from "react-router-dom";
 import Index from "../routes/index";
 import AboutPage from "../routes/about";
 import SelectOrderPage from "../routes/selectOrder";
 import SelectProductFromOrderPage from "../routes/selectProductOrder";
-import AddProductsPage from '../routes/addProducts';
+import AddProductsPage from "../routes/addProducts";
 import { api } from "../api";
+import IndexTableWithFilteringExample from "./FilterTest";
 
 function Error404() {
   const navigate = useNavigate();
@@ -45,8 +46,15 @@ function App() {
         <Route index element={<Index />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/orders" element={<SelectOrderPage />} />
-        <Route path="/orders/:orderId" element={<SelectProductFromOrderPage />} />
+        <Route
+          path="/orders/:orderId"
+          element={<SelectProductFromOrderPage />}
+        />
         <Route path="/orders/add/:boxId" element={<AddProductsPage />} />
+        <Route
+          path="/orders/test"
+          element={<IndexTableWithFilteringExample />}
+        />
         <Route path="*" element={<Error404 />} />
       </Route>
     )
@@ -97,7 +105,9 @@ function EmbeddedApp() {
     <>
       <Outlet />
       <NavMenu>
-        <Link to="/" rel="home">Shop Information</Link>
+        <Link to="/" rel="home">
+          Shop Information
+        </Link>
         <Link to="/about">About</Link>
       </NavMenu>
     </>
